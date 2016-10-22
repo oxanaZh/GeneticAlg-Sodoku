@@ -1,14 +1,19 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GeneticAlgorithm {
 
-	private ArrayList<SudokuBoard> boards = new ArrayList<SudokuBoard>();
-	private int generationCount =0;
+	private ArrayList<SudokuBoard> boards = new ArrayList<>();
+	private ArrayList<SudokuBoard> Matingpool = new ArrayList<>();
+	private int generationSize = 98;
+	private int generationCount =5;
+
+	private double fitnessSum=0;
 
 	public void initPopulation() {
-		for (int i = 0; i < 998; i++) {
+		for (int i = 0; i < generationSize; i++) {
 			boards.add(new SudokuBoard());
 		}
 		int[][] wrongBoard = {{1,2,3,4,5,6,7,8,9}, {1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9},{1,2,3,4,5,6,7,8,9}};
@@ -20,24 +25,31 @@ public class GeneticAlgorithm {
 
 	
 	public void fitnessFunction(){
-		double fitnessSum = 0;
+		double fitnessPercent;
 		for (SudokuBoard b: boards){
-			b.calcBoardFitness();
-			fitnessSum += b.getFitness();
+			b.findMisplaced();
+			fitnessPercent = b.goalFunction();
+			if(fitnessPercent < 0.8){
+				fitnessPercent *= 1+fitnessPercent/4;
+			}
+			if(fitnessPercent < 0.6){
+				fitnessPercent *= 1-fitnessPercent*fitnessPercent;
+			}
+			if(fitnessPercent < 0.4){
+				fitnessPercent *= 1-fitnessPercent*fitnessPercent;
+			}
+			if(fitnessPercent < 0.2){
+				fitnessPercent *= 1-fitnessPercent*fitnessPercent;
+			}
+			b.setFitness(fitnessPercent);
+			System.out.printf("getMisplacedSum: %f,goaFunction: %f, getFitness: %f\n",b.getMisplacedSum(), b.goalFunction(), b.getFitness());
+			fitnessSum+=b.getFitness();
 		}
-		
-		System.out.printf("FitnessSum: %f\n",fitnessSum);
-		double test = 0;
-		double selectionChance;
-		for (SudokuBoard b: boards){
-			selectionChance=( b.getFitness()/ fitnessSum)*100;
-			System.out.printf("getErrorSum: %f, getFitness: %f , Selection Chance: %.5f p\n",b.getErrorSum(),  b.getFitness(), selectionChance);
-			test += selectionChance;
-		}
-		
-		System.out.printf(">>>%f",test);
-		
+		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double)generationSize);
+
 	}
+
+
 
 	public void printPopulation(){
 		System.out.println("\n>>>Boards");

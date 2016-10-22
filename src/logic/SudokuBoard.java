@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SudokuBoard {
 
-    private final int maxMisplacedNumber = 108;
+    protected final static int maxMisplacedNumber = 108;
 	
 	private Box[] board = new Box[9];
 	private double misplaced;
@@ -106,13 +106,11 @@ public class SudokuBoard {
 
 	}
 
-
-	public void calcBoardFitness(){
-        findMisplaced();
-        setFitness(1-(this.misplaced / maxMisplacedNumber));
-    }
+	public double goalFunction(){
+		return 1-(getMisplacedSum() / maxMisplacedNumber);
+	}
 	
-	public double getErrorSum(){
+	public double getMisplacedSum(){
 		return this.misplaced;
 	}
 	
