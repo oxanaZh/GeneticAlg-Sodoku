@@ -1,7 +1,5 @@
 package logic;
 
-import java.util.ArrayList;
-
 
 public class Main {
 	
@@ -13,6 +11,7 @@ public class Main {
 		//ga.printPopulation();
 
 		ga.fitnessFunction();
+		ga.selectionFunctionRW1();
 		
 	}
 

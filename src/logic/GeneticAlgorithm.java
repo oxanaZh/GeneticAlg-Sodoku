@@ -6,9 +6,9 @@ import java.util.Random;
 public class GeneticAlgorithm {
 
 	private ArrayList<SudokuBoard> boards = new ArrayList<>();
-	private ArrayList<SudokuBoard> Matingpool = new ArrayList<>();
+	private ArrayList<SudokuBoard> matingpool = new ArrayList<>();
 	private int generationSize = 98;
-	private int generationCount =5;
+	private int generationCount =0;
 
 	private double fitnessSum=0;
 
@@ -46,6 +46,27 @@ public class GeneticAlgorithm {
 			fitnessSum+=b.getFitness();
 		}
 		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double)generationSize);
+
+	}
+	public void selectionFunctionRW1(){
+		int popuation = boards.size();
+
+		Random rand = new Random();
+		int randIndex=0;
+		int randChance=0;
+		int boardChance=0;
+		System.out.println(">>>>>>SELECTION\n");
+		while (matingpool.size() < popuation/2){
+			randIndex= rand.nextInt(popuation);
+			SudokuBoard board = boards.get(randIndex);
+			randChance= rand.nextInt(100);
+			boardChance= (int)(board.getFitness()*100);
+			if(randChance < boardChance){
+				matingpool.add(board);
+				System.out.printf("randindex: %d, getFitness: %f, randChance: %d, boardChance: %d\n", randIndex,board.getFitness(), randChance, boardChance);
+			}
+		}
+
 
 	}
 
