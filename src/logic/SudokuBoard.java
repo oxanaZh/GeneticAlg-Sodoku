@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class SudokuBoard {
 
-    private final int maxErrorNumber = 324;
+    private final int maxMisplacedNumber = 108;
 	
 	private Box[] board = new Box[9];
-	private double errors;
+	private double misplaced;
 	private double fitness;
 	private int generation;
 
@@ -57,158 +57,63 @@ public class SudokuBoard {
 
 		System.out.println("........................................");
 	}
-	
-	public void testErrors(){
-		int errorSum = 0;
-		int errorCounter = 0;
-		
-		ArrayList<Integer> numbers = new ArrayList<Integer>();
-		
-		for(int row=0; row<3; row++){
-			for(int box=0; box<3; box++){
-				if(box==0){
-					numbers.addAll(board[box].getSingleRow(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleRow(row);
 
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
+	public void findMisplaced(){
+		int misplacedSum = 0;
+
+		for(int firstindex =0, secondindex = 3; secondindex <= 9; firstindex +=3, secondindex +=3){
+			for(int row=0; row<3; row++){
+				ArrayList<Integer> numbers = new ArrayList<Integer>();
+				for(int box=firstindex; box<secondindex; box++){
+					if(box==firstindex){
+						numbers.addAll(board[box].getSingleRow(row));
+					}else{
+						ArrayList<Integer> toAdd = board[box].getSingleRow(row);
+						for(Integer number : toAdd){
+							if(!numbers.contains(number)){
+								numbers.add(number);
+							} else{
+								misplacedSum += 1;
+							}
 						}
 					}
-	
 				}
 			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
 		}
-		
-		for(int row=0; row<3; row++){
-			for(int box=3; box<6; box++){
-				if(box==0){
-					numbers.addAll(board[box].getSingleRow(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleRow(row);
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
+
+		for(int index =0; index < 3; index++){
+			for(int col=0; col<3; col++){
+				ArrayList<Integer> numbers = new ArrayList<Integer>();
+				for(int box=index; box<9; box+=3){
+					if(box==index){
+						numbers.addAll(board[box].getSingleColumn(col));
+					}
+					else{
+						ArrayList<Integer> toAdd = board[box].getSingleColumn(col);
+						for(Integer number : toAdd){
+							if(!numbers.contains(number)){
+								numbers.add(number);
+							} else{
+								misplacedSum +=1 ;
+							}
 						}
 					}
-	
 				}
 			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
-			}
-			
-		
-		for(int row=0; row<3; row++){
-			for(int box=6; box<9; box++){
-				if(box==0){
-					numbers.addAll(board[box].getSingleRow(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleRow(row);
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
-						}
-					}
-	
-				}
-			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
 		}
-		
-		//COLUMN ERRORS
-		for(int row=0; row<3; row++){
-			for(int box=0; box<9; box+=3){
-				if(numbers.isEmpty()){
-					numbers.addAll(board[box].getSingleColumn(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleColumn(row);
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
-						}
-					}
-	
-				}
-			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
-		}
-		
-		for(int row=0; row<3; row++){
-			for(int box=1; box<9; box+=3){
-				if(numbers.isEmpty()){
-					numbers.addAll(board[box].getSingleColumn(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleColumn(row);
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
-						}
-					}
-	
-				}
-			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
-		}
-		
-		for(int row=0; row<3; row++){
-			for(int box=2; box<9; box+=3){
-				if(numbers.isEmpty()){
-					numbers.addAll(board[box].getSingleColumn(row));
-				}
-				else{
-					ArrayList<Integer> toAdd = board[box].getSingleColumn(row);
-					for(int x=0;x<toAdd.size();x++){
-						if(!numbers.contains(toAdd.get(x))){
-							numbers.add(toAdd.get(x));
-						}
-					}
-	
-				}
-			}
-			errorCounter = 9 - numbers.size();
-			numbers.clear();
-			errorSum += errorCounter;
-			errorCounter = 0;
-		}
-		
-		
-		
-		
-		
-		//System.out.println("BOARD ERRORS>>> " + errorSum);
-		
-		errors = errorSum;
+
+		misplaced = misplacedSum;
+
 	}
 
+
 	public void calcBoardFitness(){
-        testErrors();
-        setFitness(1-(this.errors/maxErrorNumber));
+        findMisplaced();
+        setFitness(1-(this.misplaced / maxMisplacedNumber));
     }
 	
 	public double getErrorSum(){
-		return this.errors;
+		return this.misplaced;
 	}
 	
 	public double getFitness(){

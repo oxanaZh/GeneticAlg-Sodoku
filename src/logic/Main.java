@@ -10,7 +10,7 @@ public class Main {
 		GeneticAlgorithm ga = new GeneticAlgorithm();
 		
 		ga.initPopulation();
-		ga.printPopulation();
+		//ga.printPopulation();
 
 		ga.fitnessFunction();
 		
