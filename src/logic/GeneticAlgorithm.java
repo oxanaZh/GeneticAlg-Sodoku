@@ -37,7 +37,7 @@ public class GeneticAlgorithm {
 		parentBoards = new ArrayList<>();
 		childBoards = new ArrayList<>();
 		matingpool = new ArrayList<>();
-		generationSize = 10000;
+		generationSize = 10;
 		generationCount =0;
 		fitnessSum=0;
 		solution = null;
@@ -94,6 +94,9 @@ public class GeneticAlgorithm {
 			case SIEVE:
 				fitnessFunctionSieve();
 				break;
+			case STANDART:
+				fitnessFunctionStandart();
+				break;
 			default:
 				fitnessFunctionSieve();
 				break;
@@ -117,13 +120,30 @@ public class GeneticAlgorithm {
 				fitnessPercent *= 1-fitnessPercent*fitnessPercent;
 			}
 			b.setFitness(fitnessPercent);
-			System.out.printf("getMisplacedSum: %f,goaFunction: %f, getFitness: %f\n",b.getMisplacedSum(), b.correctnessPercentage(), b.getFitness());
+			System.out.printf("getMisplacedSum: %f,correctness: %f, getFitness: %f\n",b.getMisplacedSum(), b.correctnessPercentage(), b.getFitness());
 			fitnessSum+=b.getFitness();
 		}
 		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double)generationSize);
 
 	}
+	public void fitnessFunctionStandart(){
+		double correctnessPercentageSum = calcCorrectnessPercentageSum();
+		System.out.printf("correctnessPercentageSum: %f", correctnessPercentageSum );
+		for(SudokuBoard board : parentBoards){
+			double fitness = board.correctnessPercentage();
+			board.setFitness(fitness);
+			System.out.printf("getMisplacedSum: %f,correctness: %f, getFitness: %f\n",board.getMisplacedSum(), board.correctnessPercentage(), board.getFitness());
+			fitnessSum+=board.getFitness();
+		}
+	}
 
+	public double calcCorrectnessPercentageSum(){
+		double correctnessPercentageSum = 0.0;
+		for(SudokuBoard board : parentBoards){
+			correctnessPercentageSum += board.correctnessPercentage();
+		}
+		return correctnessPercentageSum;
+	}
 	public void selectionFunction(){
 		switch (selectionFunctionType){
 			case ROULETTEWHEEL_V1:
@@ -138,17 +158,17 @@ public class GeneticAlgorithm {
 		int popuation = parentBoards.size();
 
 		int randIndex=0;
-		int randChance=0;
-		int boardChance=0;
+		double randChance=0;
+		double boardChance=0;
 		System.out.println(">>>>>>SELECTION\n");
 		while (matingpool.size() < popuation/2){
 			randIndex= rand.nextInt(popuation);
 			SudokuBoard board = parentBoards.get(randIndex);
-			randChance= rand.nextInt(100);
-			boardChance= (int)(board.getFitness()*100);
+			randChance= rand.nextDouble();
+			boardChance= board.getFitness();
 			if(randChance < boardChance){
 				matingpool.add(board);
-				System.out.printf("randindex: %d, getFitness: %f, randChance: %d, boardChance: %d\n", randIndex,board.getFitness(), randChance, boardChance);
+				System.out.printf("randindex: %d, getFitness: %f, randChance: %f, boardChance: %f\n", randIndex,board.getFitness(), randChance, boardChance);
 			}
 		}
 
@@ -162,20 +182,20 @@ public class GeneticAlgorithm {
 		SudokuBoard child = null;
 		while(childBoards.size()<= generationSize){
 			parentX = chooseParent();
-			System.out.printf("choose parentX: fitness: %f\n", parentX.getFitness());
+			System.out.printf("choose parentX: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
 			while (toClone()){
 				childBoards.add(parentX);
 				System.out.println("clone parentX to childBoards");
 				parentX = chooseParent();
-				System.out.printf("choose parentX: fitness: %f\n", parentX.getFitness());
+				System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
 			}
 			parentY = chooseParent();
-			System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
+			System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
 			while (toClone()){
 				childBoards.add(parentY);
 				System.out.println("clone parentY to childBoards");
 				parentY = chooseParent();
-				System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
+				System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
 			}
 			child= recombinationFunction(parentX, parentY);
 			System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
