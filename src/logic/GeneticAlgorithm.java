@@ -22,20 +22,28 @@ public class GeneticAlgorithm {
 	private double fitnessSum;
 
 	private long startTime;
+
+
 	private long endTime;
 	private long timeout;
+	private long searchtime;
 
 	private ActivationsState activState = ActivationsState.INIT;
+
+	SudokuBoard solution;
 
 
 	public GeneticAlgorithm(){
 		parentBoards = new ArrayList<>();
 		childBoards = new ArrayList<>();
 		matingpool = new ArrayList<>();
-		generationSize = 100;
+		generationSize = 10000;
 		generationCount =0;
 		fitnessSum=0;
+		solution = null;
+		timeout = 300000;
 		initPopulation();
+
 	}
 
 	public void initPopulation() {
@@ -51,22 +59,47 @@ public class GeneticAlgorithm {
 
 	public void startSearch(){
 		activState = ActivationsState.START;
-		startTime = System.currentTimeMillis();
-
-		initPopulation();
-		//ga.printPopulation();
-
-		fitnessFunction();
-		selectionFunctionRW1();
-		createNewGeneration();
-		mutationFunction();
-
+		searchtime = 0;
+		solution = testGoal();
+		while(activState == ActivationsState.START && solution ==null && searchtime <= timeout){
+			startTime = System.currentTimeMillis();
+			//ga.printPopulation();
+			fitnessFunction();
+			selectionFunction();
+			createNewGeneration();
+			mutationFunction();
+			parentBoards = childBoards;
+			childBoards.clear();
+			generationCount++;
+			solution = testGoal();
+			searchtime += System.currentTimeMillis()-startTime;
+		}
 		activState = ActivationsState.STOP;
-		endTime = System.currentTimeMillis()-startTime;
+
 	}
 
-	
+
+	public SudokuBoard testGoal(){
+		for(SudokuBoard board : parentBoards){
+			if(board.goalFunction()){
+				System.out.println("Solution found!!");
+				return board;
+			}
+		}
+		return null;
+	}
+
 	public void fitnessFunction(){
+		switch(fitnessFunctionType){
+			case SIEVE:
+				fitnessFunctionSieve();
+				break;
+			default:
+				fitnessFunctionSieve();
+				break;
+		}
+	}
+	public void fitnessFunctionSieve(){
 		double fitnessPercent;
 		for (SudokuBoard b: parentBoards){
 			b.findMisplaced();
@@ -89,6 +122,17 @@ public class GeneticAlgorithm {
 		}
 		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double)generationSize);
 
+	}
+
+	public void selectionFunction(){
+		switch (selectionFunctionType){
+			case ROULETTEWHEEL_V1:
+				selectionFunctionRW1();
+				break;
+			default:
+				selectionFunctionRW1();
+				break;
+		}
 	}
 	public void selectionFunctionRW1(){
 		int popuation = parentBoards.size();
@@ -133,7 +177,7 @@ public class GeneticAlgorithm {
 				parentY = chooseParent();
 				System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
 			}
-			child= crossoverFunctionOnePoint(parentX, parentY);
+			child= recombinationFunction(parentX, parentY);
 			System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
 			//child.printBoard();
 			if(child!=null){
@@ -141,6 +185,18 @@ public class GeneticAlgorithm {
 			}
 		}
 
+	}
+	public SudokuBoard recombinationFunction(SudokuBoard parentX, SudokuBoard parentY){
+		SudokuBoard child = null;
+		switch (recombinationFunctionType){
+			case ONE_POINT_CROSSOVER:
+				child = crossoverFunctionOnePoint(parentX, parentY);
+				break;
+			default:
+				child = crossoverFunctionOnePoint(parentX, parentY);
+				break;
+		}
+		return child;
 	}
 
 	public SudokuBoard crossoverFunctionOnePoint(SudokuBoard parentX, SudokuBoard parentY){
@@ -170,9 +226,20 @@ public class GeneticAlgorithm {
 	public boolean toClone(){return rand.nextDouble()< chanceToClone;}
 
 	public void mutationFunction(){
+		switch (mutationFunctionType){
+			case INSERT_AND_SWAP:
+				mutationInsertAndSwap();
+				break;
+			default:
+				mutationInsertAndSwap();
+				break;
+		}
+	}
+
+	public void mutationInsertAndSwap(){
 		System.out.println(">>>>>MUTATION:");
 		for(SudokuBoard board : childBoards){
-			System.out.printf("to mutate board with correctness: %f \n", board.correctnessPercentage());
+			//System.out.printf("to mutate board with correctness: %f \n", board.correctnessPercentage());
 			//board.printBoard();
 			int mutationCount=0;
 			for(int i =0; i<9; i++){
@@ -181,8 +248,8 @@ public class GeneticAlgorithm {
 					mutationCount++;
 				}
 			}
-			System.out.printf("after %d mutations correctness: %f \n",mutationCount, board.correctnessPercentage());
-			if(mutationCount >0){board.printBoard();}
+			//System.out.printf("after %d mutations correctness: %f \n",mutationCount, board.correctnessPercentage());
+			//if(mutationCount >0){board.printBoard();}
 		}
 	}
 
@@ -191,7 +258,7 @@ public class GeneticAlgorithm {
 	}
 
 	public void mutateBox(Box box){
-		System.out.println("to mutate Box:");
+		//System.out.println("to mutate Box:");
 		//box.printFields();
 		int indexToMutate = rand.nextInt(9);
 		int tempValue = box.getField(indexToMutate);
@@ -216,7 +283,79 @@ public class GeneticAlgorithm {
 		}
 		System.out.println();
 	}
-	
-	
-	
+
+	public int getGenerationSize() {
+		return generationSize;
+	}
+
+	public void setGenerationSize(int generationSize) {
+		this.generationSize = generationSize;
+	}
+
+	public int getGenerationCount() {
+		return generationCount;
+	}
+
+	public void setGenerationCount(int generationCount) {
+		this.generationCount = generationCount;
+	}
+
+	public double getFitnessSum() {
+		return fitnessSum;
+	}
+
+	public void setFitnessSum(double fitnessSum) {
+		this.fitnessSum = fitnessSum;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+
+	public long getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(long timeout) {
+		this.timeout = timeout;
+	}
+
+	public long getSearchtime() {
+		return searchtime;
+	}
+
+	public void setSearchtime(long searchtime) {
+		this.searchtime = searchtime;
+	}
+
+	public ActivationsState getActivState() {
+		return activState;
+	}
+
+	public void setActivState(ActivationsState activState) {
+		this.activState = activState;
+	}
+
+	public SudokuBoard getSolution() {
+		return solution;
+	}
+
+	public void setSolution(SudokuBoard solution) {
+		this.solution = solution;
+	}
+
+
+
 }
