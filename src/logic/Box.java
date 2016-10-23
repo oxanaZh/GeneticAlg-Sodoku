@@ -120,4 +120,12 @@ public class Box {
 		}
 		return numbers;
 	}
+
+	public int getFirstIndexOf(int searchNumber){
+		int index = -1;
+		for (int i =0; i < 9; i++){
+			if(fields[i] == searchNumber){ index =i;}
+		}
+		return index;
+	}
 }

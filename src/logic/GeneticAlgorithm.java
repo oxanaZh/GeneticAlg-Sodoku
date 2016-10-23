@@ -132,13 +132,37 @@ public class GeneticAlgorithm {
 	public boolean toClone(){return rand.nextInt() < (int)(chanceToClone*100);}
 
 	public void mutationFunction(){
+		System.out.println(">>>>>MUTATION:");
 		for(SudokuBoard board : childBoards){
-
+			System.out.printf("to mutate board with correctness: %f \n", board.goalFunction());
+			board.printBoard();
+			int mutationCount=0;
+			for(int i =0; i<9; i++){
+				if(toMutate()){
+					mutateBox(board.getBox(i));
+					mutationCount++;
+				}
+			}
+			System.out.printf("after %d mutations correctness: %f \n",mutationCount, board.goalFunction());
+			if(mutationCount >0){board.printBoard();}
 		}
 	}
 
 	public boolean toMutate(){
 		return (rand.nextDouble() < chanceToMutate);
+	}
+
+	public void mutateBox(Box box){
+		System.out.println("to mutate Box:");
+		box.printFields();
+		int indexToMutate = rand.nextInt(9);
+		int temp = box.getField(indexToMutate);
+		int mutation = rand.nextInt(9);
+		box.setField(box.getFirstIndexOf(mutation),temp);
+		box.setField(indexToMutate, mutation );
+		System.out.printf("after mutations on index %d to value %d\n",indexToMutate, mutation);
+		box.printFields();
+
 	}
 
 	public void printPopulation(){
