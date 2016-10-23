@@ -106,8 +106,13 @@ public class SudokuBoard {
 
 	}
 
-	public double goalFunction(){
+	public double correctnessPercentage(){
+		findMisplaced();
 		return 1-(getMisplacedSum() / maxMisplacedNumber);
+	}
+
+	public boolean goalFunction(){
+		return correctnessPercentage() == 1.0;
 	}
 	
 	public double getMisplacedSum(){

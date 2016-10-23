@@ -9,7 +9,7 @@ public class GeneticAlgorithm {
 	private ArrayList<SudokuBoard> parentBoards = new ArrayList<>();
 	private ArrayList<SudokuBoard> childBoards = new ArrayList<>();
 	private ArrayList<SudokuBoard> matingpool = new ArrayList<>();
-	private int generationSize = 10;
+	private int generationSize = 4;
 	private int generationCount =0;
 	private final double chanceToClone = 0.4;
 	private final double chanceToMutate = 0.01;
@@ -32,7 +32,7 @@ public class GeneticAlgorithm {
 		double fitnessPercent;
 		for (SudokuBoard b: parentBoards){
 			b.findMisplaced();
-			fitnessPercent = b.goalFunction();
+			fitnessPercent = b.correctnessPercentage();
 			if(fitnessPercent < 0.8){
 				fitnessPercent *= 1+fitnessPercent/4;
 			}
@@ -46,7 +46,7 @@ public class GeneticAlgorithm {
 				fitnessPercent *= 1-fitnessPercent*fitnessPercent;
 			}
 			b.setFitness(fitnessPercent);
-			System.out.printf("getMisplacedSum: %f,goaFunction: %f, getFitness: %f\n",b.getMisplacedSum(), b.goalFunction(), b.getFitness());
+			System.out.printf("getMisplacedSum: %f,goaFunction: %f, getFitness: %f\n",b.getMisplacedSum(), b.correctnessPercentage(), b.getFitness());
 			fitnessSum+=b.getFitness();
 		}
 		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double)generationSize);
@@ -96,7 +96,7 @@ public class GeneticAlgorithm {
 				System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
 			}
 			child= crossoverFunctionOnePoint(parentX, parentY);
-			System.out.println(" = new child:");
+			System.out.printf(" = new child with correctness %f:", child.correctnessPercentage());
 			child.printBoard();
 			if(child!=null){
 				childBoards.add(child);
@@ -134,7 +134,7 @@ public class GeneticAlgorithm {
 	public void mutationFunction(){
 		System.out.println(">>>>>MUTATION:");
 		for(SudokuBoard board : childBoards){
-			System.out.printf("to mutate board with correctness: %f \n", board.goalFunction());
+			System.out.printf("to mutate board with correctness: %f \n", board.correctnessPercentage());
 			board.printBoard();
 			int mutationCount=0;
 			for(int i =0; i<9; i++){
@@ -143,7 +143,7 @@ public class GeneticAlgorithm {
 					mutationCount++;
 				}
 			}
-			System.out.printf("after %d mutations correctness: %f \n",mutationCount, board.goalFunction());
+			System.out.printf("after %d mutations correctness: %f \n",mutationCount, board.correctnessPercentage());
 			if(mutationCount >0){board.printBoard();}
 		}
 	}
