@@ -9,7 +9,7 @@ public class GeneticAlgorithm {
 	private ArrayList<SudokuBoard> parentBoards = new ArrayList<>();
 	private ArrayList<SudokuBoard> childBoards = new ArrayList<>();
 	private ArrayList<SudokuBoard> matingpool = new ArrayList<>();
-	private int generationSize = 4;
+	private int generationSize = 100;
 	private int generationCount =0;
 	private final double chanceToClone = 0.4;
 	private final double chanceToMutate = 0.01;
@@ -96,8 +96,8 @@ public class GeneticAlgorithm {
 				System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
 			}
 			child= crossoverFunctionOnePoint(parentX, parentY);
-			System.out.printf(" = new child with correctness %f:", child.correctnessPercentage());
-			child.printBoard();
+			System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
+			//child.printBoard();
 			if(child!=null){
 				childBoards.add(child);
 			}
@@ -109,9 +109,9 @@ public class GeneticAlgorithm {
 		System.out.println(">>>>>CROSSOVER:");
 		System.out.printf("crossover: parentX: fitness: %f + parentY: fitness: %f +\n", parentX.getFitness(), parentY.getFitness());
 		System.out.println("board X:");
-		parentX.printBoard();
+		//parentX.printBoard();
 		System.out.println("board Y:");
-		parentY.printBoard();
+		//parentY.printBoard();
 		SudokuBoard child=null;
 
 		Box[] boxes = new Box[9];
@@ -135,7 +135,7 @@ public class GeneticAlgorithm {
 		System.out.println(">>>>>MUTATION:");
 		for(SudokuBoard board : childBoards){
 			System.out.printf("to mutate board with correctness: %f \n", board.correctnessPercentage());
-			board.printBoard();
+			//board.printBoard();
 			int mutationCount=0;
 			for(int i =0; i<9; i++){
 				if(toMutate()){
@@ -154,7 +154,7 @@ public class GeneticAlgorithm {
 
 	public void mutateBox(Box box){
 		System.out.println("to mutate Box:");
-		box.printFields();
+		//box.printFields();
 		int indexToMutate = rand.nextInt(9);
 		int tempValue = box.getField(indexToMutate);
 		int mutationValue = rand.nextInt(9)+1;
@@ -164,8 +164,8 @@ public class GeneticAlgorithm {
 		}
 
 		box.setField(indexToMutate, mutationValue );
-		System.out.printf("after mutations on index %d to value %d\n",indexToMutate, mutationValue);
-		box.printFields();
+		//System.out.printf("after mutations on index %d to value %d\n",indexToMutate, mutationValue);
+		//box.printFields();
 
 	}
 
