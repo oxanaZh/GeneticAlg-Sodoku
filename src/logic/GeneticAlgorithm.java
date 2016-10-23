@@ -25,7 +25,7 @@ public class GeneticAlgorithm {
 	private long endTime;
 	private long timeout;
 
-	private ActivationsState activState = ActivationsState.START;
+	private ActivationsState activState = ActivationsState.INIT;
 
 
 	public GeneticAlgorithm(){
@@ -50,10 +50,18 @@ public class GeneticAlgorithm {
 	}
 
 	public void startSearch(){
+		activState = ActivationsState.START;
 		startTime = System.currentTimeMillis();
 
+		initPopulation();
+		//ga.printPopulation();
 
+		fitnessFunction();
+		selectionFunctionRW1();
+		createNewGeneration();
+		mutationFunction();
 
+		activState = ActivationsState.STOP;
 		endTime = System.currentTimeMillis()-startTime;
 	}
 

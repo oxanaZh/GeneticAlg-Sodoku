@@ -7,13 +7,7 @@ public class Main {
 
 		GeneticAlgorithm ga = new GeneticAlgorithm();
 		
-		ga.initPopulation();
-		//ga.printPopulation();
-
-		ga.fitnessFunction();
-		ga.selectionFunctionRW1();
-		ga.createNewGeneration();
-		ga.mutationFunction();
+		ga.startSearch();
 		
 	}
 
