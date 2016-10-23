@@ -21,6 +21,13 @@ public class GeneticAlgorithm {
 
 	private double fitnessSum;
 
+	private long startTime;
+	private long endTime;
+	private long timeout;
+
+	private ActivationsState activState = ActivationsState.START;
+
+
 	public GeneticAlgorithm(){
 		parentBoards = new ArrayList<>();
 		childBoards = new ArrayList<>();
@@ -40,6 +47,14 @@ public class GeneticAlgorithm {
 		int[][] winBoard = {{5,3,4,6,7,2,1,9,8}, {6,7,8,1,9,5,3,4,2},{9,1,2,3,4,8,5,6,7},{8,5,9,4,2,6,7,1,3},{7,6,1,8,5,3,9,2,4},{4,2,3,7,9,1,8,5,6},{9,6,1,2,8,7,3,4,5},{5,3,7,4,1,9,2,8,6},{2,8,4,6,3,5,1,7,9}};
 		parentBoards.add(new SudokuBoard(winBoard));*/
 
+	}
+
+	public void startSearch(){
+		startTime = System.currentTimeMillis();
+
+
+
+		endTime = System.currentTimeMillis()-startTime;
 	}
 
 	
