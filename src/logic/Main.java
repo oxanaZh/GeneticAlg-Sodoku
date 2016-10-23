@@ -12,6 +12,7 @@ public class Main {
 
 		ga.fitnessFunction();
 		ga.selectionFunctionRW1();
+		ga.createNewGeneration();
 		
 	}
 
