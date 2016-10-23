@@ -11,7 +11,7 @@ public class GeneticAlgorithm {
 	private ArrayList<SudokuBoard> matingpool = new ArrayList<>();
 	private int generationSize = 10;
 	private int generationCount =0;
-	private final double chanceToClone = 0.06;
+	private final double chanceToClone = 0.4;
 	private final double chanceToMutate = 0.01;
 
 	private double fitnessSum=0;
@@ -80,22 +80,22 @@ public class GeneticAlgorithm {
 		SudokuBoard child = null;
 		while(childBoards.size()<= generationSize){
 			parentX = chooseParent();
-			System.out.printf("choose paretX: fitness: %f\n", parentX.getFitness());
+			System.out.printf("choose parentX: fitness: %f\n", parentX.getFitness());
 			while (toClone()){
 				childBoards.add(parentX);
 				System.out.println("clone parentX to childBoards");
 				parentX = chooseParent();
-				System.out.printf("choose paretX: fitness: %f\n", parentX.getFitness());
+				System.out.printf("choose parentX: fitness: %f\n", parentX.getFitness());
 			}
 			parentY = chooseParent();
-			System.out.printf("choose paretY: fitness: %f\n", parentX.getFitness());
+			System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
 			while (toClone()){
 				childBoards.add(parentY);
 				System.out.println("clone parentY to childBoards");
 				parentY = chooseParent();
-				System.out.printf("choose paretY: fitness: %f\n", parentX.getFitness());
+				System.out.printf("choose parentY: fitness: %f\n", parentX.getFitness());
 			}
-			child=crossoverFunction(parentX, parentY);
+			child= crossoverFunctionOnePoint(parentX, parentY);
 			System.out.println(" = new child:");
 			child.printBoard();
 			if(child!=null){
@@ -105,9 +105,9 @@ public class GeneticAlgorithm {
 
 	}
 
-	public SudokuBoard crossoverFunction(SudokuBoard parentX, SudokuBoard parentY){
+	public SudokuBoard crossoverFunctionOnePoint(SudokuBoard parentX, SudokuBoard parentY){
 		System.out.println(">>>>>CROSSOVER:");
-		System.out.printf("crossover: paretX: fitness: %f + paretY: fitness: %f +\n", parentX.getFitness(), parentY.getFitness());
+		System.out.printf("crossover: parentX: fitness: %f + parentY: fitness: %f +\n", parentX.getFitness(), parentY.getFitness());
 		System.out.println("board X:");
 		parentX.printBoard();
 		System.out.println("board Y:");
@@ -115,7 +115,7 @@ public class GeneticAlgorithm {
 		SudokuBoard child=null;
 
 		Box[] boxes = new Box[9];
-		int cuteIndex = rand.nextInt(8);
+		int cuteIndex = rand.nextInt(7)+1;
 		System.out.printf("cute index: %d", cuteIndex);
 		for(int i =0; i<= cuteIndex; i++){
 			boxes[i] = parentX.getBox(i);
@@ -129,7 +129,7 @@ public class GeneticAlgorithm {
 
 	public SudokuBoard chooseParent(){return matingpool.get(rand.nextInt(matingpool.size()));}
 
-	public boolean toClone(){return rand.nextInt() < (int)(chanceToClone*100);}
+	public boolean toClone(){return rand.nextDouble()< chanceToClone;}
 
 	public void mutationFunction(){
 		System.out.println(">>>>>MUTATION:");
