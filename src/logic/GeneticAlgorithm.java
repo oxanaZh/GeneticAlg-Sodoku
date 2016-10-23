@@ -12,6 +12,7 @@ public class GeneticAlgorithm {
 	private int generationSize = 10;
 	private int generationCount =0;
 	private final double chanceToClone = 0.4;
+	private final double chanceToMutate = 0.01;
 
 	private double fitnessSum=0;
 
@@ -130,6 +131,15 @@ public class GeneticAlgorithm {
 
 	public boolean toClone(){return rand.nextDouble()< chanceToClone;}
 
+	public void mutationFunction(){
+		for(SudokuBoard board : childBoards){
+
+		}
+	}
+
+	public boolean toMutate(){
+		return (rand.nextDouble() < chanceToMutate);
+	}
 
 	public void printPopulation(){
 		System.out.println("\n>>>Boards");
