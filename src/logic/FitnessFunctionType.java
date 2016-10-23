@@ -1,5 +1,5 @@
 package logic;
 
-public enum FittnessFunctionType {
+public enum FitnessFunctionType {
     STANDART, SIEVE
 }

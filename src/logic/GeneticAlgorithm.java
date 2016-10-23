@@ -6,15 +6,30 @@ import java.util.Random;
 public class GeneticAlgorithm {
 
 	Random rand = new Random();
-	private ArrayList<SudokuBoard> parentBoards = new ArrayList<>();
-	private ArrayList<SudokuBoard> childBoards = new ArrayList<>();
-	private ArrayList<SudokuBoard> matingpool = new ArrayList<>();
-	private int generationSize = 100;
-	private int generationCount =0;
+	private ArrayList<SudokuBoard> parentBoards;
+	private ArrayList<SudokuBoard> childBoards;
+	private ArrayList<SudokuBoard> matingpool;
+	private int generationSize;
+	private int generationCount;
 	private final double chanceToClone = 0.4;
 	private final double chanceToMutate = 0.01;
 
-	private double fitnessSum=0;
+	private FitnessFunctionType fitnessFunctionType = FitnessFunctionType.SIEVE;
+	private SelectionFunctionType selectionFunctionType = SelectionFunctionType.ROULETTEWHEEL_V1;
+	private RecombinationFunctionType recombinationFunctionType = RecombinationFunctionType.N_POINT_CROSSOVER;
+	private MutationFunctionType mutationFunctionType = MutationFunctionType.INSERT_AND_SWAP;
+
+	private double fitnessSum;
+
+	public GeneticAlgorithm(){
+		parentBoards = new ArrayList<>();
+		childBoards = new ArrayList<>();
+		matingpool = new ArrayList<>();
+		generationSize = 100;
+		generationCount =0;
+		fitnessSum=0;
+		initPopulation();
+	}
 
 	public void initPopulation() {
 		for (int i = 0; i < generationSize; i++) {
