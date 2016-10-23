@@ -156,11 +156,15 @@ public class GeneticAlgorithm {
 		System.out.println("to mutate Box:");
 		box.printFields();
 		int indexToMutate = rand.nextInt(9);
-		int temp = box.getField(indexToMutate);
-		int mutation = rand.nextInt(9);
-		box.setField(box.getFirstIndexOf(mutation),temp);
-		box.setField(indexToMutate, mutation );
-		System.out.printf("after mutations on index %d to value %d\n",indexToMutate, mutation);
+		int tempValue = box.getField(indexToMutate);
+		int mutationValue = rand.nextInt(9)+1;
+		int exchangeIndex = box.getFirstIndexOf(mutationValue);
+		if(exchangeIndex > 0){
+			box.setField(exchangeIndex,tempValue);
+		}
+
+		box.setField(indexToMutate, mutationValue );
+		System.out.printf("after mutations on index %d to value %d\n",indexToMutate, mutationValue);
 		box.printFields();
 
 	}
