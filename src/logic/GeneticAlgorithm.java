@@ -65,6 +65,7 @@ public class GeneticAlgorithm {
 			startTime = System.currentTimeMillis();
 			//ga.printPopulation();
 			fitnessFunction();
+			System.out.printf("fitness avarage: %f\n", fitnessAvarage()/(double)populationSize);
 			selectionFunction();
 			createNewGeneration();
 			mutationFunction();
@@ -90,6 +91,7 @@ public class GeneticAlgorithm {
 	}
 
 	public void fitnessFunction(){
+		System.out.println("<<<<<<fitnessFunction");
 		switch(fitnessFunctionType){
 			case SIEVE:
 				fitnessFunctionSieve();
@@ -121,9 +123,7 @@ public class GeneticAlgorithm {
 			}
 			b.setFitness(fitnessPercent);
 			System.out.printf("getMisplacedSum: %f,correctness: %f, getFitness: %f\n",b.getMisplacedSum(), b.correctnessPercentage(), b.getFitness());
-			fitnessSum+=b.getFitness();
 		}
-		System.out.printf("FitnessSum: %f, fitnessavarage: %.5f\n",fitnessSum, fitnessSum/(double) populationSize);
 
 	}
 	public void fitnessFunctionStandart(){
@@ -131,8 +131,15 @@ public class GeneticAlgorithm {
 			double fitness = board.correctnessPercentage();
 			board.setFitness(fitness);
 			System.out.printf("getMisplacedSum: %f,correctness: %f, getFitness: %f\n",board.getMisplacedSum(), board.correctnessPercentage(), board.getFitness());
-			fitnessSum+=board.getFitness();
 		}
+	}
+
+	public double fitnessAvarage(){
+		double fitnessAvarage = 0.0;
+		for(SudokuBoard board : parentBoards){
+			fitnessAvarage += board.correctnessPercentage();
+		}
+		return fitnessAvarage;
 	}
 
 	public double calcCorrectnessPercentageSum(){
@@ -180,26 +187,26 @@ public class GeneticAlgorithm {
 		SudokuBoard child = null;
 		while(childBoards.size()<= populationSize){
 			parentX = chooseParent();
-			System.out.printf("choose parentX: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
+			//System.out.printf("choose parentX: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
 			parentY = chooseParent();
-			System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentY.getFitness(), parentY.correctnessPercentage());
+			//System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentY.getFitness(), parentY.correctnessPercentage());
 			while (toClone()){
 				childBoards.add(parentX);
 				childBoards.add(parentY);
-				System.out.println("clone parents to childBoards");
+				//System.out.println("clone parents to childBoards");
 				parentY = chooseParent();
 				parentX = chooseParent();
-				System.out.printf("choose parentX: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
-				System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentY.getFitness(), parentY.correctnessPercentage());
+				//System.out.printf("choose parentX: fitness: %f, correctness %f\n", parentX.getFitness(), parentX.correctnessPercentage());
+				//System.out.printf("choose parentY: fitness: %f, correctness %f\n", parentY.getFitness(), parentY.correctnessPercentage());
 			}
 			child= recombinationFunction(parentX, parentY);
-			System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
+			//System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
 			//child.printBoard();
 			if(child!=null){
 				childBoards.add(child);
 			}
 			child= recombinationFunction(parentX, parentY);
-			System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
+			//System.out.printf(" = new child with correctness %f:\n", child.correctnessPercentage());
 			//child.printBoard();
 			if(child!=null){
 				childBoards.add(child);
@@ -221,21 +228,21 @@ public class GeneticAlgorithm {
 	}
 
 	public SudokuBoard crossoverFunctionOnePoint(SudokuBoard parentX, SudokuBoard parentY){
-		System.out.println(">>>>>CROSSOVER:");
-		System.out.printf("crossover: parentX: fitness: %f + parentY: fitness: %f +\n", parentX.getFitness(), parentY.getFitness());
-		System.out.println("board X:");
+		//System.out.println(">>>>>CROSSOVER:");
+		//System.out.printf("crossover: parentX: fitness: %f + parentY: fitness: %f +\n", parentX.getFitness(), parentY.getFitness());
+		//System.out.println("board X:");
 		//parentX.printBoard();
-		System.out.println("board Y:");
+		//System.out.println("board Y:");
 		//parentY.printBoard();
 		SudokuBoard child=null;
 
 		Box[] boxes = new Box[9];
-		int cuteIndex = rand.nextInt(7)+1;
-		System.out.printf("cute index: %d", cuteIndex);
-		for(int i =0; i<= cuteIndex; i++){
+		int cutIndex = rand.nextInt(7)+1;
+		//System.out.printf("cute index: %d", cutIndex);
+		for(int i =0; i<= cutIndex; i++){
 			boxes[i] = parentX.getBox(i);
 		}
-		for(int i =cuteIndex+1; i<9; i++){
+		for(int i =cutIndex+1; i<9; i++){
 			boxes[i] = parentY.getBox(i);
 		}
 		child = new SudokuBoard(boxes);
