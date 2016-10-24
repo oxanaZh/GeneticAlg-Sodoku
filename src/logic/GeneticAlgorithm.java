@@ -69,7 +69,7 @@ public class GeneticAlgorithm {
 			selectionFunction();
 			createNewGeneration();
 			mutationFunction();
-			parentBoards = childBoards;
+			parentBoards = (ArrayList<SudokuBoard>) childBoards.clone();
 			childBoards.clear();
 			generationCount++;
 			solution = testGoal();
@@ -219,6 +219,9 @@ public class GeneticAlgorithm {
 		switch (recombinationFunctionType){
 			case ONE_POINT_CROSSOVER:
 				child = crossoverFunctionOnePoint(parentX, parentY);
+				break;
+			case N_POINT_CROSSOVER:
+				child = crossoverFunctionNPoint(parentX, parentY);
 				break;
 			default:
 				child = crossoverFunctionOnePoint(parentX, parentY);
