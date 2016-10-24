@@ -249,6 +249,24 @@ public class GeneticAlgorithm {
 		return child;
 	}
 
+	public SudokuBoard crossoverFunctionNPoint(SudokuBoard parentX, SudokuBoard parentY){
+		SudokuBoard child=null;
+		Box[] boxes = new Box[9];
+		int choseParent;
+		for (int i = 0; i < 9;i++){
+			choseParent = rand.nextInt(2);
+			switch (choseParent){
+				case 0:
+					boxes[i] = parentX.getBox(i);
+					break;
+				case 1:
+					boxes[i] = parentY.getBox(i);
+					break;
+			}
+		}
+		return child;
+	}
+
 	public SudokuBoard chooseParent(){return matingpool.get(rand.nextInt(matingpool.size()));}
 
 	public boolean toClone(){return rand.nextDouble()< chanceToClone;}
